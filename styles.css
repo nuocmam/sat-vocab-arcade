@@ -567,46 +567,6 @@ body {
 .missed-list .def { color: var(--text); }
 .missed-list .picked { color: var(--red); font-size: 0.9rem; }
 
-.combo-pop {
-  position: fixed;
-  left: 50%;
-  top: 22%;
-  transform: translate(-50%, -50%) scale(0.6);
-  z-index: 12;
-  pointer-events: none;
-  font-family: "Orbitron", sans-serif;
-  font-size: 1.6rem;
-  color: var(--yellow);
-  text-shadow: 0 0 12px #f5ff3d, 0 0 28px rgba(245, 255, 61, 0.45);
-  opacity: 0;
-  letter-spacing: 0.08em;
-  text-align: center;
-  white-space: nowrap;
-}
-.combo-pop.big {
-  font-size: 2rem;
-  color: var(--orange);
-  text-shadow: 0 0 12px #f5ff3d, 0 0 28px rgba(255, 107, 44, 0.7);
-}
-.combo-pop.huge {
-  font-size: 2.4rem;
-  color: var(--magenta);
-  text-shadow: 0 0 12px #ff2ec8, 0 0 28px rgba(245, 255, 61, 0.55);
-}
-.combo-pop.broke {
-  color: var(--red);
-  font-size: 1.7rem;
-  text-shadow: 0 0 12px #ff3b5c, 0 0 28px rgba(255, 59, 92, 0.7);
-}
-.combo-pop.show {
-  animation: comboBurst 0.7s cubic-bezier(.2,1.5,.3,1) forwards;
-}
-@keyframes comboBurst {
-  0% { opacity: 0; transform: translate(-50%, -40%) scale(0.4); }
-  30% { opacity: 1; transform: translate(-50%, -50%) scale(1.12); }
-  100% { opacity: 0; transform: translate(-50%, -70%) scale(1.05); }
-}
-
 .sr-only {
   position: absolute;
   width: 1px; height: 1px;
@@ -683,7 +643,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .play-btn-glint, .insert-coin, .high-note, .combo-note, .countdown span, .combo-pop,
+  .play-btn-glint, .insert-coin, .high-note, .combo-note, .countdown span,
   .cabinet.punch, .cabinet.punch-md, .cabinet.punch-lg,
   .word.hit, .word.enter, .hud-num.tick, .hud-num.broke, .float-pt.go,
   .choice.enter, .choice.correct.land, .final-num.punch,

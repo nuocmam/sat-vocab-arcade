@@ -57,7 +57,6 @@
     missedWrap: document.getElementById("missedWrap"),
     missedList: document.getElementById("missedList"),
     flash: document.getElementById("flash"),
-    comboPop: document.getElementById("comboPop"),
     cabinet: document.getElementById("app"),
     fxLayer: document.getElementById("fxLayer"),
     floatLayer: document.getElementById("floatLayer"),
