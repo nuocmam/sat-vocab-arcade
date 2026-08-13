@@ -210,14 +210,13 @@
     return "+" + n;
   }
 
-  function popCombo(text, combo, broke) {
-    els.comboPop.textContent = text;
-    els.comboPop.classList.remove("show", "big", "huge", "broke");
-    if (broke) els.comboPop.classList.add("broke");
-    else if (combo >= 10) els.comboPop.classList.add("huge");
-    else if (combo >= 5) els.comboPop.classList.add("big");
-    void els.comboPop.offsetWidth;
-    els.comboPop.classList.add("show");
+  function popCombo(text, combo) {
+    els.feedback.textContent = text;
+    els.feedback.className = "feedback shout";
+    if (combo >= 10) els.feedback.classList.add("huge");
+    else if (combo >= 5) els.feedback.classList.add("big");
+    void els.feedback.offsetWidth;
+    els.feedback.classList.add("show");
   }
 
   function paintCombo(n) {
@@ -237,9 +236,10 @@
     els.comboEl.classList.remove("broke");
     void els.comboEl.offsetWidth;
     els.comboEl.classList.add("broke");
-    popCombo("COMBO BROKE", 0, true);
+    els.comboEl.textContent = "BROKE";
     brokeTimer = setTimeout(function () {
       els.comboEl.classList.remove("broke");
+      els.comboEl.textContent = "x0";
       brokeTimer = 0;
     }, 400);
   }
