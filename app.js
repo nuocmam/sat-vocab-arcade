@@ -76,6 +76,8 @@
   };
   var SPARK_COLORS = ["#00fff0", "#7cff4a", "#f5ff3d", "#ff2ec8"];
   var floatPool = [];
+  var scoreTickRaf = 0;
+  var eatTimer = 0;
 
   function loadStats() {
     try {
@@ -178,10 +180,14 @@
   }
 
   function sfxOk(combo) {
-    beep(520, 0.07, "square", 0.05);
-    setTimeout(function () { beep(780, 0.09, "square", 0.05); }, 60);
-    if (combo >= 5) setTimeout(function () { beep(1040, 0.12, "triangle", 0.04); }, 120);
-    if (combo >= 10) setTimeout(function () { beep(1320, 0.1, "square", 0.035); }, 180);
+    var n = combo || 0;
+    beep(520 + n * 36, 0.07, "square", 0.05);
+    setTimeout(function () { beep(780 + n * 36, 0.09, "square", 0.05); }, 60);
+    if (n >= 5) setTimeout(function () { beep(1040, 0.12, "triangle", 0.04); }, 120);
+    if (n >= 10) {
+      setTimeout(function () { beep(1320, 0.1, "square", 0.035); }, 180);
+      setTimeout(function () { beep(1560, 0.08, "square", 0.03); }, 230);
+    }
   }
   function sfxBad() {
     beep(180, 0.18, "sawtooth", 0.04);
@@ -302,12 +308,12 @@
   }
 
   function recycleFloat(el) {
-    el.classList.remove("go");
+    el.classList.remove("go", "tier-lo", "tier-mid", "tier-hi");
     if (el.parentNode) el.parentNode.removeChild(el);
     if (floatPool.indexOf(el) < 0 && floatPool.length < 8) floatPool.push(el);
   }
 
-  function spawnFloat(x, y, pts) {
+  function spawnFloat(x, y, pts, combo) {
     if (reduceMotion || !els.floatLayer) return;
     var el = floatPool.pop();
     if (!el) {
@@ -315,6 +321,8 @@
       el.className = "float-pt";
       el.addEventListener("animationend", function () { recycleFloat(el); });
     }
+    el.classList.remove("go", "tier-lo", "tier-mid", "tier-hi");
+    el.classList.add(combo >= 5 ? "tier-hi" : combo >= 3 ? "tier-mid" : "tier-lo");
     el.textContent = "+" + pts;
     el.style.left = Math.round(x) + "px";
     el.style.top = Math.round(y) + "px";
@@ -341,6 +349,37 @@
     el.classList.add("tick");
   }
 
+  function paintScore(next) {
+    var prev = Number(els.scoreEl.textContent) || 0;
+    if (scoreTickRaf) {
+      cancelAnimationFrame(scoreTickRaf);
+      scoreTickRaf = 0;
+    }
+    if (reduceMotion || next === prev) {
+      els.scoreEl.textContent = String(next);
+      return;
+    }
+    var start = performance.now();
+    var dur = 240;
+    function step(now) {
+      var t = Math.min(1, (now - start) / dur);
+      var eased = 1 - (1 - t) * (1 - t);
+      els.scoreEl.textContent = String(Math.round(prev + (next - prev) * eased));
+      if (t < 1) scoreTickRaf = requestAnimationFrame(step);
+      else scoreTickRaf = 0;
+    }
+    scoreTickRaf = requestAnimationFrame(step);
+  }
+
+  function eatBoard() {
+    els.choices.classList.add("eat");
+    if (eatTimer) clearTimeout(eatTimer);
+    eatTimer = setTimeout(function () {
+      els.choices.classList.remove("eat");
+      eatTimer = 0;
+    }, 80);
+  }
+
   function wordPunch() {
     if (!els.wordEl) return;
     els.wordEl.classList.remove("hit");
@@ -363,17 +402,13 @@
       rect = originEl.getBoundingClientRect();
       x = rect.left + rect.width / 2;
       y = rect.top + rect.height / 2;
-    } else if (els.wordEl) {
-      rect = els.wordEl.getBoundingClientRect();
-      x = rect.left + rect.width / 2;
-      y = rect.top + rect.height / 2;
     } else {
       x = window.innerWidth / 2;
-      y = window.innerHeight / 2;
+      y = window.innerHeight * 0.22;
     }
     n = combo >= 10 ? 24 : combo >= 5 ? 20 : 16;
     burst(x, y, n);
-    spawnFloat(x, y - 8, points);
+    spawnFloat(x, y - 8, points, combo);
     punch(combo);
     wordPunch();
     if (!reduceMotion) {
@@ -383,8 +418,15 @@
     haptic(combo);
   }
 
-  function flash(kind) {
-    els.flash.className = "flash " + kind;
+  function flash(kind, combo) {
+    els.flash.className = "flash";
+    void els.flash.offsetWidth;
+    if (kind === "bad") {
+      els.flash.classList.add("bad");
+      return;
+    }
+    if (!combo || combo <= 2) return;
+    els.flash.classList.add(combo <= 4 ? "ok-mid" : "ok-hi");
   }
 
   function renderQuestion() {
@@ -393,21 +435,26 @@
     state.locked = false;
     state.shownAt = performance.now();
     els.wordEl.textContent = q.word;
-    els.wordEl.classList.remove("hit");
+    els.wordEl.classList.remove("hit", "enter");
     els.scoreEl.classList.remove("tick");
     els.comboEl.classList.remove("tick");
     els.feedback.textContent = "";
     els.feedback.className = "feedback";
     els.choices.innerHTML = "";
+    eatBoard();
     q.options.forEach(function (opt, idx) {
       var btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "choice";
+      btn.className = "choice" + (reduceMotion ? "" : " enter");
       btn.dataset.idx = String(idx);
       btn.innerHTML = '<span class="key">' + KEYS[idx] + "</span><span>" + escapeHtml(opt.d) + "</span>";
       btn.addEventListener("click", function () { answer(idx); });
       els.choices.appendChild(btn);
     });
+    if (!reduceMotion) {
+      void els.wordEl.offsetWidth;
+      els.wordEl.classList.add("enter");
+    }
     els.playStatus.textContent = "Define " + q.word;
   }
 
@@ -434,6 +481,11 @@
       else if (i === idx) buttons[i].classList.add("wrong");
       else buttons[i].classList.add("dim");
     }
+    if (opt.ok && buttons[idx]) {
+      buttons[idx].classList.remove("land");
+      void buttons[idx].offsetWidth;
+      buttons[idx].classList.add("land");
+    }
 
     if (opt.ok) {
       var elapsed = performance.now() - state.shownAt;
@@ -446,9 +498,9 @@
       state.hits += 1;
       els.feedback.textContent = "HIT  +" + points + (state.combo > 1 ? "  COMBO x" + state.combo : "");
       els.feedback.className = "feedback ok";
-      els.scoreEl.textContent = String(state.score);
+      paintScore(state.score);
       els.comboEl.textContent = "x" + state.combo;
-      flash("ok");
+      flash("ok", state.combo);
       sfxOk(state.combo);
       juiceHit(buttons[idx], points, state.combo);
       if (state.combo >= 2) popCombo(comboLabel(state.combo), state.combo);
@@ -474,7 +526,7 @@
         return;
       }
       renderQuestion();
-    }, opt.ok ? 460 : 900);
+    }, opt.ok ? 280 : 900);
   }
 
   function tick() {
@@ -506,6 +558,10 @@
     state.missed = [];
     state.used = {};
     state.current = null;
+    if (scoreTickRaf) {
+      cancelAnimationFrame(scoreTickRaf);
+      scoreTickRaf = 0;
+    }
     els.scoreEl.textContent = "0";
     els.comboEl.textContent = "x0";
     els.timeEl.textContent = "60";
@@ -601,7 +657,8 @@
   els.muteBtn.addEventListener("click", function () {
     state.muted = !state.muted;
     els.muteBtn.setAttribute("aria-pressed", state.muted ? "true" : "false");
-    els.muteBtn.textContent = state.muted ? "MUTE" : "SND";
+    els.muteBtn.textContent = state.muted ? "MUTED" : "SND";
+    els.muteBtn.setAttribute("aria-label", state.muted ? "Unmute sound" : "Mute sound");
     if (!state.muted) ensureAudio();
   });
   document.addEventListener("keydown", onKey);
