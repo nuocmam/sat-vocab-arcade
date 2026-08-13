@@ -50,6 +50,7 @@
     playStatus: document.getElementById("playStatus"),
     finalScore: document.getElementById("finalScore"),
     highNote: document.getElementById("highNote"),
+    comboNote: document.getElementById("comboNote"),
     hitCount: document.getElementById("hitCount"),
     missCount: document.getElementById("missCount"),
     runCombo: document.getElementById("runCombo"),
@@ -77,7 +78,9 @@
   var SPARK_COLORS = ["#00fff0", "#7cff4a", "#f5ff3d", "#ff2ec8"];
   var floatPool = [];
   var scoreTickRaf = 0;
+  var finalTickRaf = 0;
   var eatTimer = 0;
+  var brokeTimer = 0;
 
   function loadStats() {
     try {
@@ -207,13 +210,72 @@
     return "+" + n;
   }
 
-  function popCombo(text, combo) {
+  function popCombo(text, combo, broke) {
     els.comboPop.textContent = text;
-    els.comboPop.classList.remove("show", "big", "huge");
-    if (combo >= 10) els.comboPop.classList.add("huge");
+    els.comboPop.classList.remove("show", "big", "huge", "broke");
+    if (broke) els.comboPop.classList.add("broke");
+    else if (combo >= 10) els.comboPop.classList.add("huge");
     else if (combo >= 5) els.comboPop.classList.add("big");
     void els.comboPop.offsetWidth;
     els.comboPop.classList.add("show");
+  }
+
+  function paintCombo(n) {
+    els.comboEl.textContent = "x" + n;
+    els.comboEl.classList.remove("mag", "combo-lo", "combo-mid", "combo-hi", "broke");
+    if (n >= 10) els.comboEl.classList.add("combo-hi");
+    else if (n >= 5) els.comboEl.classList.add("combo-mid");
+    else if (n >= 3) els.comboEl.classList.add("combo-lo");
+    else els.comboEl.classList.add("mag");
+  }
+
+  function stingComboBreak() {
+    if (brokeTimer) {
+      clearTimeout(brokeTimer);
+      brokeTimer = 0;
+    }
+    els.comboEl.classList.remove("broke");
+    void els.comboEl.offsetWidth;
+    els.comboEl.classList.add("broke");
+    popCombo("COMBO BROKE", 0, true);
+    brokeTimer = setTimeout(function () {
+      els.comboEl.classList.remove("broke");
+      brokeTimer = 0;
+    }, 400);
+  }
+
+  function hapticMiss() {
+    if (!navigator.vibrate) return;
+    try { navigator.vibrate(30); } catch (e) {}
+  }
+
+  function paintFinalScore(next) {
+    if (finalTickRaf) {
+      cancelAnimationFrame(finalTickRaf);
+      finalTickRaf = 0;
+    }
+    els.finalScore.classList.remove("punch");
+    if (reduceMotion || !next) {
+      els.finalScore.textContent = String(next);
+      return;
+    }
+    els.finalScore.textContent = "0";
+    var start = performance.now();
+    var dur = 700;
+    function step(now) {
+      var t = Math.min(1, (now - start) / dur);
+      var eased = 1 - (1 - t) * (1 - t);
+      els.finalScore.textContent = String(Math.round(next * eased));
+      if (t < 1) {
+        finalTickRaf = requestAnimationFrame(step);
+      } else {
+        finalTickRaf = 0;
+        els.finalScore.classList.remove("punch");
+        void els.finalScore.offsetWidth;
+        els.finalScore.classList.add("punch");
+      }
+    }
+    finalTickRaf = requestAnimationFrame(step);
   }
 
   function sizeFx() {
@@ -437,7 +499,7 @@
     els.wordEl.textContent = q.word;
     els.wordEl.classList.remove("hit", "enter");
     els.scoreEl.classList.remove("tick");
-    els.comboEl.classList.remove("tick");
+    els.comboEl.classList.remove("tick", "broke");
     els.feedback.textContent = "";
     els.feedback.className = "feedback";
     els.choices.innerHTML = "";
@@ -499,19 +561,22 @@
       els.feedback.textContent = "HIT  +" + points + (state.combo > 1 ? "  COMBO x" + state.combo : "");
       els.feedback.className = "feedback ok";
       paintScore(state.score);
-      els.comboEl.textContent = "x" + state.combo;
+      paintCombo(state.combo);
       flash("ok", state.combo);
       sfxOk(state.combo);
       juiceHit(buttons[idx], points, state.combo);
       if (state.combo >= 2) popCombo(comboLabel(state.combo), state.combo);
     } else {
+      var wasCombo = state.combo;
       state.misses += 1;
       state.combo = 0;
-      els.comboEl.textContent = "x0";
+      paintCombo(0);
       els.feedback.textContent = "MISS  —  " + state.current.def;
       els.feedback.className = "feedback bad";
       flash("bad");
       sfxBad();
+      if (wasCombo >= 3) stingComboBreak();
+      hapticMiss();
       state.missed.push({
         word: state.current.word,
         def: state.current.def,
@@ -562,8 +627,17 @@
       cancelAnimationFrame(scoreTickRaf);
       scoreTickRaf = 0;
     }
+    if (finalTickRaf) {
+      cancelAnimationFrame(finalTickRaf);
+      finalTickRaf = 0;
+    }
+    if (brokeTimer) {
+      clearTimeout(brokeTimer);
+      brokeTimer = 0;
+    }
     els.scoreEl.textContent = "0";
-    els.comboEl.textContent = "x0";
+    paintCombo(0);
+    els.finalScore.classList.remove("punch");
     els.timeEl.textContent = "60";
     els.timerBar.style.transform = "scaleX(1)";
     els.hudTimer.classList.remove("low");
@@ -599,14 +673,29 @@
     state.playing = false;
     cancelAnimationFrame(state.raf);
     var stats = loadStats();
-    var beaten = state.score > stats.highScore;
+    var prevHigh = stats.highScore;
+    var prevCombo = stats.longestCombo;
+    var beaten = state.score > prevHigh;
+    var comboRecord = state.bestCombo > prevCombo;
     if (beaten) stats.highScore = state.score;
-    if (state.bestCombo > stats.longestCombo) stats.longestCombo = state.bestCombo;
+    if (comboRecord) stats.longestCombo = state.bestCombo;
     stats.gamesPlayed += 1;
     saveStats(stats);
 
-    els.finalScore.textContent = String(state.score);
-    els.highNote.hidden = !beaten;
+    paintFinalScore(state.score);
+    els.highNote.classList.toggle("short", !beaten);
+    if (beaten) {
+      els.highNote.textContent = "NEW HIGH SCORE";
+    } else {
+      els.highNote.textContent = "BEST " + prevHigh + " · " + (prevHigh - state.score) + " SHORT";
+    }
+    els.highNote.hidden = false;
+    if (comboRecord) {
+      els.comboNote.textContent = "NEW MAX COMBO x" + state.bestCombo;
+      els.comboNote.hidden = false;
+    } else {
+      els.comboNote.hidden = true;
+    }
     els.hitCount.textContent = String(state.hits);
     els.missCount.textContent = String(state.misses);
     els.runCombo.textContent = String(state.bestCombo);

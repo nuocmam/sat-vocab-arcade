@@ -101,6 +101,7 @@
         <span id="finalScore" class="final-num">0</span>
       </h2>
       <p id="highNote" class="high-note" hidden>NEW HIGH SCORE</p>
+      <p id="comboNote" class="combo-note" hidden>NEW MAX COMBO</p>
       <div class="result-stats">
         <div><span class="stat-label">HITS</span><span id="hitCount">0</span></div>
         <div><span class="stat-label">MISSES</span><span id="missCount">0</span></div>
@@ -111,7 +112,10 @@
         <ul id="missedList" class="missed-list"></ul>
       </div>
       <div class="result-actions">
-        <button id="againBtn" class="play-btn" type="button">PLAY AGAIN</button>
+        <button id="againBtn" class="play-btn" type="button">
+          <span class="play-btn-glint"></span>
+          PLAY AGAIN
+        </button>
         <button id="homeBtn" class="ghost-btn" type="button">HOME</button>
       </div>
     </section>
