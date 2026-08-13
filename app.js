@@ -81,19 +81,54 @@
   var eatTimer = 0;
   var brokeTimer = 0;
 
+  function emptyStats() {
+    return { highScore: 0, longestCombo: 0, gamesPlayed: 0, weak: {} };
+  }
+
+  function normalizeWeak(raw) {
+    var out = {};
+    var k, e, misses, streak;
+    if (!raw || typeof raw !== "object") return out;
+    for (k in raw) {
+      if (!Object.prototype.hasOwnProperty.call(raw, k)) continue;
+      e = raw[k];
+      if (!e || typeof e !== "object") continue;
+      misses = Number(e.misses) || 0;
+      streak = Number(e.streak) || 0;
+      if (misses > 0) out[k] = { misses: misses, streak: streak };
+    }
+    return out;
+  }
+
   function loadStats() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return { highScore: 0, longestCombo: 0, gamesPlayed: 0 };
+      if (!raw) return emptyStats();
       var data = JSON.parse(raw);
       return {
         highScore: Number(data.highScore) || 0,
         longestCombo: Number(data.longestCombo) || 0,
         gamesPlayed: Number(data.gamesPlayed) || 0,
+        weak: normalizeWeak(data.weak),
       };
     } catch (e) {
-      return { highScore: 0, longestCombo: 0, gamesPlayed: 0 };
+      return emptyStats();
     }
+  }
+
+  function noteWeak(word, hit) {
+    var stats = loadStats();
+    var pile = stats.weak;
+    if (hit) {
+      if (!pile[word]) return;
+      pile[word].streak += 1;
+      if (pile[word].streak >= 2) delete pile[word];
+    } else {
+      if (!pile[word]) pile[word] = { misses: 0, streak: 0 };
+      pile[word].misses += 1;
+      pile[word].streak = 0;
+    }
+    saveStats(stats);
   }
 
   function saveStats(stats) {
@@ -129,6 +164,23 @@
     return a;
   }
 
+  function pickWeighted(hot, weak) {
+    var total = 0;
+    var i, w, r, acc;
+    for (i = 0; i < hot.length; i++) {
+      w = weak[hot[i].w];
+      total += (w && w.misses) || 1;
+    }
+    r = Math.random() * total;
+    acc = 0;
+    for (i = 0; i < hot.length; i++) {
+      w = weak[hot[i].w];
+      acc += (w && w.misses) || 1;
+      if (r < acc) return hot[i];
+    }
+    return hot[hot.length - 1];
+  }
+
   function pickQuestion() {
     var pool = [];
     var i;
@@ -139,7 +191,14 @@
       state.used = {};
       pool = words.slice();
     }
-    var item = pool[Math.floor(Math.random() * pool.length)];
+    var weak = loadStats().weak;
+    var hot = [];
+    for (i = 0; i < pool.length; i++) {
+      if (weak[pool[i].w]) hot.push(pool[i]);
+    }
+    var item = (hot.length && Math.random() < 0.5)
+      ? pickWeighted(hot, weak)
+      : pool[Math.floor(Math.random() * pool.length)];
     state.used[item.w] = true;
 
     var distractors = [];
@@ -565,6 +624,7 @@
       sfxOk(state.combo);
       juiceHit(buttons[idx], points, state.combo);
       if (state.combo >= 5) popCombo(comboLabel(state.combo), state.combo);
+      noteWeak(state.current.word, true);
     } else {
       var wasCombo = state.combo;
       state.misses += 1;
@@ -581,6 +641,7 @@
         def: state.current.def,
         picked: opt.d,
       });
+      noteWeak(state.current.word, false);
     }
 
     setTimeout(function () {

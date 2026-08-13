@@ -11,7 +11,7 @@ Play it live: **https://nuocmam.github.io/sat-vocab-arcade/**
 3. Faster answers and consecutive hits stack more points.
 4. A miss dumps your combo. At the end you’ll see your score, a new high score if you beat it, and every word you missed with the correct definition.
 
-Stats (best score, longest combo, games played) stay in this browser via `localStorage`.
+Stats (best score, longest combo, games played) stay in this browser via `localStorage`. Missed words quietly resurface more often until you get them right twice.
 
 ## Local preview
 
