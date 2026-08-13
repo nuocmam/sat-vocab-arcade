@@ -57,9 +57,25 @@
     missedList: document.getElementById("missedList"),
     flash: document.getElementById("flash"),
     comboPop: document.getElementById("comboPop"),
+    cabinet: document.getElementById("app"),
+    fxLayer: document.getElementById("fxLayer"),
+    floatLayer: document.getElementById("floatLayer"),
   };
 
   var audioCtx = null;
+  var reduceMotion = false;
+  var fx = {
+    ctx: null,
+    pool: [],
+    live: [],
+    raf: 0,
+    running: false,
+    last: 0,
+    w: 0,
+    h: 0,
+  };
+  var SPARK_COLORS = ["#00fff0", "#7cff4a", "#f5ff3d", "#ff2ec8"];
+  var floatPool = [];
 
   function loadStats() {
     try {
@@ -165,6 +181,7 @@
     beep(520, 0.07, "square", 0.05);
     setTimeout(function () { beep(780, 0.09, "square", 0.05); }, 60);
     if (combo >= 5) setTimeout(function () { beep(1040, 0.12, "triangle", 0.04); }, 120);
+    if (combo >= 10) setTimeout(function () { beep(1320, 0.1, "square", 0.035); }, 180);
   }
   function sfxBad() {
     beep(180, 0.18, "sawtooth", 0.04);
@@ -180,15 +197,190 @@
     if (n >= 15) return "VOCAB GOD x" + n;
     if (n >= 10) return "UNSTOPPABLE x" + n;
     if (n >= 5) return "ON FIRE x" + n;
-    if (n >= 3) return "COMBO x" + n;
+    if (n >= 2) return "COMBO x" + n;
     return "+" + n;
   }
 
-  function popCombo(text) {
+  function popCombo(text, combo) {
     els.comboPop.textContent = text;
-    els.comboPop.classList.remove("show");
+    els.comboPop.classList.remove("show", "big", "huge");
+    if (combo >= 10) els.comboPop.classList.add("huge");
+    else if (combo >= 5) els.comboPop.classList.add("big");
     void els.comboPop.offsetWidth;
     els.comboPop.classList.add("show");
+  }
+
+  function sizeFx() {
+    if (!els.fxLayer || !fx.ctx) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    fx.w = window.innerWidth;
+    fx.h = window.innerHeight;
+    els.fxLayer.width = Math.floor(fx.w * dpr);
+    els.fxLayer.height = Math.floor(fx.h * dpr);
+    els.fxLayer.style.width = fx.w + "px";
+    els.fxLayer.style.height = fx.h + "px";
+    fx.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function initFx() {
+    var mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+    reduceMotion = !!(mq && mq.matches);
+    if (mq) {
+      var onMq = function (e) { reduceMotion = !!e.matches; };
+      if (mq.addEventListener) mq.addEventListener("change", onMq);
+      else if (mq.addListener) mq.addListener(onMq);
+    }
+    if (els.fxLayer) {
+      fx.ctx = els.fxLayer.getContext("2d");
+      sizeFx();
+      window.addEventListener("resize", sizeFx);
+    }
+  }
+
+  function burst(x, y, n) {
+    if (reduceMotion || !fx.ctx) return;
+    var i, p, ang, spd;
+    for (i = 0; i < n; i++) {
+      p = fx.pool.pop();
+      if (!p) p = {};
+      ang = (Math.PI * 2 * i) / n + (Math.random() - 0.5) * 0.5;
+      spd = 90 + Math.random() * 260;
+      p.x = x;
+      p.y = y;
+      p.vx = Math.cos(ang) * spd;
+      p.vy = Math.sin(ang) * spd - 50;
+      p.life = 0.28 + Math.random() * 0.2;
+      p.age = 0;
+      p.r = 2 + Math.random() * 2.4;
+      p.color = SPARK_COLORS[i % SPARK_COLORS.length];
+      fx.live.push(p);
+    }
+    if (!fx.running) {
+      fx.running = true;
+      fx.last = performance.now();
+      fx.raf = requestAnimationFrame(tickFx);
+    }
+  }
+
+  function tickFx(now) {
+    var dt = Math.min(0.032, (now - fx.last) / 1000);
+    fx.last = now;
+    var ctx = fx.ctx;
+    if (!ctx) {
+      fx.running = false;
+      return;
+    }
+    ctx.clearRect(0, 0, fx.w, fx.h);
+    var next = [];
+    var i, p, t;
+    for (i = 0; i < fx.live.length; i++) {
+      p = fx.live[i];
+      p.age += dt;
+      if (p.age >= p.life) {
+        fx.pool.push(p);
+        continue;
+      }
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vy += 380 * dt;
+      t = 1 - p.age / p.life;
+      ctx.globalAlpha = t;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * (0.55 + t * 0.45), 0, Math.PI * 2);
+      ctx.fill();
+      next.push(p);
+    }
+    fx.live = next;
+    ctx.globalAlpha = 1;
+    if (fx.live.length) {
+      fx.raf = requestAnimationFrame(tickFx);
+    } else {
+      fx.running = false;
+      ctx.clearRect(0, 0, fx.w, fx.h);
+    }
+  }
+
+  function recycleFloat(el) {
+    el.classList.remove("go");
+    if (el.parentNode) el.parentNode.removeChild(el);
+    if (floatPool.indexOf(el) < 0 && floatPool.length < 8) floatPool.push(el);
+  }
+
+  function spawnFloat(x, y, pts) {
+    if (reduceMotion || !els.floatLayer) return;
+    var el = floatPool.pop();
+    if (!el) {
+      el = document.createElement("span");
+      el.className = "float-pt";
+      el.addEventListener("animationend", function () { recycleFloat(el); });
+    }
+    el.textContent = "+" + pts;
+    el.style.left = Math.round(x) + "px";
+    el.style.top = Math.round(y) + "px";
+    els.floatLayer.appendChild(el);
+    void el.offsetWidth;
+    el.classList.add("go");
+  }
+
+  function punch(combo) {
+    if (reduceMotion || !els.cabinet) return;
+    var cls = combo >= 10 ? "punch-lg" : combo >= 5 ? "punch-md" : "punch";
+    els.cabinet.classList.remove("punch", "punch-md", "punch-lg");
+    void els.cabinet.offsetWidth;
+    els.cabinet.classList.add(cls);
+    setTimeout(function () {
+      els.cabinet.classList.remove("punch", "punch-md", "punch-lg");
+    }, 230);
+  }
+
+  function hudTick(el) {
+    if (!el) return;
+    el.classList.remove("tick");
+    void el.offsetWidth;
+    el.classList.add("tick");
+  }
+
+  function wordPunch() {
+    if (!els.wordEl) return;
+    els.wordEl.classList.remove("hit");
+    void els.wordEl.offsetWidth;
+    els.wordEl.classList.add("hit");
+  }
+
+  function haptic(combo) {
+    if (!navigator.vibrate) return;
+    try {
+      if (combo >= 10) navigator.vibrate([30, 40, 30, 40, 50]);
+      else if (combo >= 5) navigator.vibrate([20, 40, 20]);
+      else navigator.vibrate(18);
+    } catch (e) {}
+  }
+
+  function juiceHit(originEl, points, combo) {
+    var x, y, n, rect;
+    if (originEl && originEl.getBoundingClientRect) {
+      rect = originEl.getBoundingClientRect();
+      x = rect.left + rect.width / 2;
+      y = rect.top + rect.height / 2;
+    } else if (els.wordEl) {
+      rect = els.wordEl.getBoundingClientRect();
+      x = rect.left + rect.width / 2;
+      y = rect.top + rect.height / 2;
+    } else {
+      x = window.innerWidth / 2;
+      y = window.innerHeight / 2;
+    }
+    n = combo >= 10 ? 24 : combo >= 5 ? 20 : 16;
+    burst(x, y, n);
+    spawnFloat(x, y - 8, points);
+    punch(combo);
+    wordPunch();
+    if (!reduceMotion) {
+      hudTick(els.scoreEl);
+      hudTick(els.comboEl);
+    }
+    haptic(combo);
   }
 
   function flash(kind) {
@@ -201,6 +393,9 @@
     state.locked = false;
     state.shownAt = performance.now();
     els.wordEl.textContent = q.word;
+    els.wordEl.classList.remove("hit");
+    els.scoreEl.classList.remove("tick");
+    els.comboEl.classList.remove("tick");
     els.feedback.textContent = "";
     els.feedback.className = "feedback";
     els.choices.innerHTML = "";
@@ -255,7 +450,8 @@
       els.comboEl.textContent = "x" + state.combo;
       flash("ok");
       sfxOk(state.combo);
-      if (state.combo >= 3) popCombo(comboLabel(state.combo));
+      juiceHit(buttons[idx], points, state.combo);
+      if (state.combo >= 2) popCombo(comboLabel(state.combo), state.combo);
     } else {
       state.misses += 1;
       state.combo = 0;
@@ -278,7 +474,7 @@
         return;
       }
       renderQuestion();
-    }, opt.ok ? 420 : 900);
+    }, opt.ok ? 460 : 900);
   }
 
   function tick() {
@@ -415,5 +611,6 @@
     els.howto = document.querySelector(".howto");
     if (els.howto) els.howto.textContent = "Word bank failed to load.";
   }
+  initFx();
   paintHome();
 })();
