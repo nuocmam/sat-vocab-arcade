@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SAT Word Blitz — Vocab Arcade</title>
+  <meta name="description" content="A 60-second neon SAT vocabulary arcade. Race the clock, stack combos, crush definitions.">
+  <meta name="theme-color" content="#05010d">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="fx-grid" aria-hidden="true"></div>
+  <div class="fx-scan" aria-hidden="true"></div>
+  <div class="fx-vignette" aria-hidden="true"></div>
+  <div id="flash" class="flash" aria-hidden="true"></div>
+
+  <main id="app" class="cabinet">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">◆</span>
+        <span class="brand-name">VOCAB ARCADE</span>
+      </div>
+      <button id="muteBtn" class="icon-btn" type="button" aria-pressed="false" aria-label="Mute sound">SND</button>
+    </header>
+
+    <!-- HOME -->
+    <section id="home" class="screen is-active" aria-labelledby="title">
+      <p class="insert-coin">INSERT BRAIN · PRESS START</p>
+      <h1 id="title" class="title">
+        <span class="title-glow">SAT</span>
+        <span class="title-word">WORD</span>
+        <span class="title-blitz">BLITZ</span>
+      </h1>
+      <p class="tagline">60 seconds. Four choices. Don't drop the combo.</p>
+
+      <div class="stat-row" role="group" aria-label="Career stats">
+        <div class="stat-chip">
+          <span class="stat-label">BEST</span>
+          <span id="homeBest" class="stat-value">0</span>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-label">MAX COMBO</span>
+          <span id="homeCombo" class="stat-value">0</span>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-label">RUNS</span>
+          <span id="homeGames" class="stat-value">0</span>
+        </div>
+      </div>
+
+      <button id="playBtn" class="play-btn" type="button">
+        <span class="play-btn-glint"></span>
+        PLAY
+      </button>
+      <p class="howto">Match the SAT word to its definition. Speed + streaks pay extra. Keys 1–4 or A–D.</p>
+    </section>
+
+    <!-- PLAY -->
+    <section id="play" class="screen" hidden aria-labelledby="playStatus">
+      <p id="playStatus" class="sr-only" aria-live="polite">Round in progress</p>
+      <div class="hud">
+        <div class="hud-block">
+          <span class="hud-label">SCORE</span>
+          <span id="scoreEl" class="hud-num cyan">0</span>
+        </div>
+        <div class="hud-block hud-timer">
+          <span class="hud-label">TIME</span>
+          <span id="timeEl" class="hud-num yellow">60</span>
+          <div class="timer-track" aria-hidden="true"><div id="timerBar" class="timer-bar"></div></div>
+        </div>
+        <div class="hud-block">
+          <span class="hud-label">COMBO</span>
+          <span id="comboEl" class="hud-num mag">x0</span>
+        </div>
+      </div>
+
+      <div id="countdown" class="countdown" hidden>
+        <span id="countdownNum">3</span>
+      </div>
+
+      <div id="questionWrap" class="question-wrap">
+        <p class="prompt-label">DEFINE</p>
+        <h2 id="wordEl" class="word">—</h2>
+        <p id="feedback" class="feedback" aria-live="assertive"></p>
+        <div id="choices" class="choices" role="group" aria-label="Definition choices"></div>
+        <p class="key-hint">Tap a definition or press 1–4</p>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="results" class="screen" hidden aria-labelledby="resultsTitle">
+      <p class="game-over">GAME OVER</p>
+      <h2 id="resultsTitle" class="results-score">
+        <span class="results-label">SCORE</span>
+        <span id="finalScore" class="final-num">0</span>
+      </h2>
+      <p id="highNote" class="high-note" hidden>NEW HIGH SCORE</p>
+      <div class="result-stats">
+        <div><span class="stat-label">HITS</span><span id="hitCount">0</span></div>
+        <div><span class="stat-label">MISSES</span><span id="missCount">0</span></div>
+        <div><span class="stat-label">COMBO</span><span id="runCombo">0</span></div>
+      </div>
+      <div id="missedWrap" class="missed-wrap" hidden>
+        <h3 class="missed-title">Missed words</h3>
+        <ul id="missedList" class="missed-list"></ul>
+      </div>
+      <div class="result-actions">
+        <button id="againBtn" class="play-btn" type="button">PLAY AGAIN</button>
+        <button id="homeBtn" class="ghost-btn" type="button">HOME</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="comboPop" class="combo-pop" aria-hidden="true"></div>
+
+  <script src="words.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
