@@ -558,14 +558,14 @@
       var points = Math.round((100 + speed) * mult);
       state.score += points;
       state.hits += 1;
-      els.feedback.textContent = "HIT  +" + points + (state.combo > 1 ? "  COMBO x" + state.combo : "");
-      els.feedback.className = "feedback ok";
+      els.feedback.textContent = "";
+      els.feedback.className = "feedback";
       paintScore(state.score);
       paintCombo(state.combo);
       flash("ok", state.combo);
       sfxOk(state.combo);
       juiceHit(buttons[idx], points, state.combo);
-      if (state.combo >= 2) popCombo(comboLabel(state.combo), state.combo);
+      if (state.combo >= 5) popCombo(comboLabel(state.combo), state.combo);
     } else {
       var wasCombo = state.combo;
       state.misses += 1;
