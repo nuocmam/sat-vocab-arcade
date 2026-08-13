@@ -366,25 +366,23 @@ body {
 .feedback.shout {
   color: var(--yellow);
   letter-spacing: 0.08em;
-  text-shadow: 0 0 12px #f5ff3d, 0 0 28px rgba(245, 255, 61, 0.45);
+  text-shadow: 0 0 12px #f5ff3d, 0 0 22px rgba(245, 255, 61, 0.5);
   transform-origin: center center;
 }
 .feedback.shout.big {
-  font-size: 1.35rem;
-  color: var(--orange);
-  text-shadow: 0 0 12px #f5ff3d, 0 0 28px rgba(255, 107, 44, 0.7);
+  color: var(--yellow);
+  text-shadow: 0 0 12px #f5ff3d, 0 0 22px rgba(245, 255, 61, 0.5);
 }
 .feedback.shout.huge {
-  font-size: 1.55rem;
   color: var(--magenta);
-  text-shadow: 0 0 12px #ff2ec8, 0 0 28px rgba(245, 255, 61, 0.55);
+  text-shadow: 0 0 12px #ff2ec8, 0 0 22px rgba(255, 46, 200, 0.55);
 }
 .feedback.shout.show {
   animation: shoutPop 0.28s cubic-bezier(.2,1.5,.3,1);
 }
 @keyframes shoutPop {
-  0% { opacity: 0; transform: scale(0.6); }
-  40% { opacity: 1; transform: scale(1.12); }
+  0% { opacity: 0; transform: scale(0.85); }
+  40% { opacity: 1; transform: scale(1.06); }
   100% { opacity: 1; transform: scale(1); }
 }
 
