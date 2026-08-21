@@ -1,0 +1,72 @@
+{
+  "ok": true,
+  "command": "wait-playing",
+  "state": {
+    "url": "http://127.0.0.1:8000/",
+    "screen": "play",
+    "homeHidden": true,
+    "playHidden": false,
+    "resultsHidden": true,
+    "countdownHidden": true,
+    "questionHidden": false,
+    "countdown": "BLITZ",
+    "word": "meticulous",
+    "playStatus": "Define meticulous",
+    "feedback": "",
+    "feedbackClass": "feedback",
+    "score": "0",
+    "time": "60",
+    "combo": "x0",
+    "comboClass": "hud-num mag",
+    "choices": [
+      {
+        "idx": 0,
+        "key": "1",
+        "text": "understood by only a small, specialized group",
+        "className": "choice enter",
+        "disabled": false
+      },
+      {
+        "idx": 1,
+        "key": "2",
+        "text": "showing extreme care about small details",
+        "className": "choice enter",
+        "disabled": false
+      },
+      {
+        "idx": 2,
+        "key": "3",
+        "text": "without fault or error",
+        "className": "choice enter",
+        "disabled": false
+      },
+      {
+        "idx": 3,
+        "key": "4",
+        "text": "feeling sincere remorse for a wrong",
+        "className": "choice enter",
+        "disabled": false
+      }
+    ],
+    "finalScore": "0",
+    "highNote": "NEW HIGH SCORE",
+    "highNoteHidden": true,
+    "comboNote": "NEW MAX COMBO",
+    "comboNoteHidden": true,
+    "hitCount": "0",
+    "missCount": "0",
+    "runCombo": "0",
+    "missedHidden": true,
+    "missed": [],
+    "homeBest": "0",
+    "homeCombo": "0",
+    "homeGames": "0",
+    "mute": {
+      "pressed": "false",
+      "label": "Mute sound",
+      "text": "SND"
+    },
+    "playDisabled": false,
+    "storage": null
+  }
+}

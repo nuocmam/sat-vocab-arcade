@@ -16,7 +16,7 @@ Drive these paths against a live `python3 -m http.server` + Chrome CDP session. 
 - Use `./scripts/drive.mjs <command>` against the launched CDP browser. One command per process; the tab persists.
 - Prefer IDs and ARIA names (`#playBtn`, `#wordEl`, `[aria-label="Definition choices"]`). Do not use click coordinates.
 - After PLAY, wait with `wait-countdown` then `wait-playing` (~2.1s). Do not assume the first word is visible immediately.
-- Sample a hit at 120ms (`key-correct` / `answer-correct` already do this). The next question overwrites the board at 280ms (hit) or 900ms (miss).
+- Sample a hit at 120ms (`key-correct` / `answer-correct` already do this). Photograph it with `--shot` on that same command. The next question overwrites the board at 280ms (hit) or 900ms (miss); a second `drive.mjs` process is too slow.
 - Map the right definition through `window.SAT_WORDS` (the helpers do this). Do not hard-code a word — the deck is shuffled and weakly weighted.
 - Keys: `1`–`4` and `a`–`d` choose by index, not by “correctness”. `Enter` / `Space` start a run from home or results.
 - Isolate a second cabinet with `SAT_VOCAB_PORT`, `SAT_VOCAB_CDP`, and `SAT_VOCAB_RUN_DIR`.

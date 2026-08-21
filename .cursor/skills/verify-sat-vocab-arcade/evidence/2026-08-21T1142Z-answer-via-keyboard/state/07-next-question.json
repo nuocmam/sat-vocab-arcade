@@ -1,0 +1,72 @@
+{
+  "ok": true,
+  "command": "state",
+  "state": {
+    "url": "http://127.0.0.1:8000/",
+    "screen": "play",
+    "homeHidden": true,
+    "playHidden": false,
+    "resultsHidden": true,
+    "countdownHidden": true,
+    "questionHidden": false,
+    "countdown": "BLITZ",
+    "word": "perfidious",
+    "playStatus": "Define perfidious",
+    "feedback": "",
+    "feedbackClass": "feedback",
+    "score": "173",
+    "time": "59",
+    "combo": "x1",
+    "comboClass": "hud-num mag",
+    "choices": [
+      {
+        "idx": 0,
+        "key": "1",
+        "text": "deceitful and untrustworthy",
+        "className": "choice enter",
+        "disabled": false
+      },
+      {
+        "idx": 1,
+        "key": "2",
+        "text": "trying to impress by affecting greater importance",
+        "className": "choice enter",
+        "disabled": false
+      },
+      {
+        "idx": 2,
+        "key": "3",
+        "text": "showing sound, careful judgment",
+        "className": "choice enter",
+        "disabled": false
+      },
+      {
+        "idx": 3,
+        "key": "4",
+        "text": "a perfect example of a quality",
+        "className": "choice enter",
+        "disabled": false
+      }
+    ],
+    "finalScore": "0",
+    "highNote": "NEW HIGH SCORE",
+    "highNoteHidden": true,
+    "comboNote": "NEW MAX COMBO",
+    "comboNoteHidden": true,
+    "hitCount": "0",
+    "missCount": "0",
+    "runCombo": "0",
+    "missedHidden": true,
+    "missed": [],
+    "homeBest": "0",
+    "homeCombo": "0",
+    "homeGames": "0",
+    "mute": {
+      "pressed": "false",
+      "label": "Mute sound",
+      "text": "SND"
+    },
+    "playDisabled": false,
+    "storage": null
+  }
+}

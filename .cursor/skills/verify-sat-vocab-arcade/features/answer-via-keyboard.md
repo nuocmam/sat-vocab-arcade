@@ -24,20 +24,17 @@ Preconditions: baseline from `features/README.md`, then the start-round path thr
 2. Screenshot the unanswered board.
    - Command: `node scripts/drive.mjs shot 03-question`
    - Result: PNG of the word and four enabled definitions.
-3. Press the correct number key.
-   - Command: `node scripts/drive.mjs key-correct`
-   - Result: JSON includes `key` (`"1"`–`"4"`), `word`, `def`. `state.choices` has one `className` containing `correct`. `state.score` is an integer string > 0. `state.combo` is `"x1"`. `state.feedback` is empty on a first hit (shouts start at combo ≥ 5).
-4. Screenshot the graded board immediately.
-   - Command: `node scripts/drive.mjs shot 04-after-key`
-   - Result: PNG still showing the same word with a green HIT row. Take this before 280ms elapses; `key-correct` already waited 120ms.
-5. Wait for the next prompt.
+3. Press the correct number key and photograph the grade in one session.
+   - Command: `node scripts/drive.mjs --shot 04-after-key key-correct`
+   - Result: JSON includes `key` (`"1"`–`"4"`), `word`, `def`. `state.choices` has one `className` containing `correct`. `state.score` is an integer string > 0. `state.combo` is `"x1"`. `state.feedback` is empty on a first hit (shouts start at combo ≥ 5). `file` is the PNG of that same board (green HIT row). A separate `shot` process is too slow — the next word lands at 280ms.
+4. Wait for the next prompt.
    - Command: `node scripts/drive.mjs wait 400` then `node scripts/drive.mjs state`
    - Result: `word` is a different SAT word, four new enabled choices, score still ≥ the post-hit value.
-6. Optional — prove a miss with a letter key.
+5. Optional — prove a miss with a letter key.
    - Command: `node scripts/drive.mjs key-wrong` (or `node scripts/drive.mjs key a` after you know index 0 is wrong)
    - Result: one choice has `wrong` in `className`, `feedback` starts with `MISS  —  `, `combo` is `"x0"` (or `"BROKE"` if combo was ≥ 3).
 
-`prove.sh` runs steps 1–5 as the canonical proof of this feature.
+`prove.sh` runs steps 1–4 as the canonical proof of this feature.
 
 ## Gotchas
 

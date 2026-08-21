@@ -69,6 +69,7 @@ Prefer the shipped CDP helper against the Chrome `launch.sh` opened. Selectors b
 node .cursor/skills/verify-sat-vocab-arcade/scripts/drive.mjs ready
 node .cursor/skills/verify-sat-vocab-arcade/scripts/drive.mjs state
 node .cursor/skills/verify-sat-vocab-arcade/scripts/drive.mjs shot 01-home
+node .cursor/skills/verify-sat-vocab-arcade/scripts/drive.mjs --shot 04-after-key key-correct
 ```
 
 Each invocation connects to CDP, runs one command, prints JSON, disconnects. The Chrome tab stays up, so state carries across commands.
@@ -78,6 +79,7 @@ Each invocation connects to CDP, runs one command, prints JSON, disconnects. The
 | `ready` | Wait for `#home.is-active` and visible `#playBtn` |
 | `state` | Screen, HUD, choices, results, `localStorage` |
 | `shot <name>` | PNG → `$SAT_VOCAB_EVIDENCE/shots/` (or `.verify-run/shots`) |
+| `--shot <name>` (flag) | Take that PNG in the **same** CDP session as the command. Required after a hit — a second `drive.mjs` process misses the 280ms `.correct` window. |
 | `click-play` / `click-again` / `click-home` / `click-mute` | `#playBtn` `#againBtn` `#homeBtn` `#muteBtn` |
 | `key <k>` | `1`–`4`, `a`–`d`, `Enter`, `Space` |
 | `key-correct` / `key-wrong` | Map `#wordEl` through `window.SAT_WORDS` to a key, press it, wait 120ms, dump state |

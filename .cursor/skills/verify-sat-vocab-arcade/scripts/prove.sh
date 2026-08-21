@@ -47,8 +47,8 @@ node "$DRIVE" shot 02-countdown
 node "$DRIVE" wait-playing | tee "$EVIDENCE/state/05-question.json"
 node "$DRIVE" shot 03-question
 
-node "$DRIVE" key-correct | tee "$EVIDENCE/state/06-after-key.json"
-node "$DRIVE" shot 04-after-key
+# Same CDP session: the 280ms hit lock is gone if we reconnect for a shot.
+node "$DRIVE" --shot 04-after-key key-correct | tee "$EVIDENCE/state/06-after-key.json"
 
 # Next question lands 280ms after a hit; sample it.
 node "$DRIVE" wait 400

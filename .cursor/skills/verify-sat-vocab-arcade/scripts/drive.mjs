@@ -34,13 +34,33 @@ const CDP_URL = process.env.SAT_VOCAB_CDP_URL || fileEnv.SAT_VOCAB_CDP_URL || `h
 const EVIDENCE = process.env.SAT_VOCAB_EVIDENCE || path.join(runDir, "shots");
 const STORAGE_KEY = "satWordBlitz.v1";
 
-const argv = process.argv.slice(2);
-const command = argv[0];
-const rest = argv.slice(1);
+function parseArgs(raw) {
+  const out = { command: undefined, rest: [], shot: null };
+  const args = raw.slice();
+  while (args.length) {
+    const tok = args.shift();
+    if (tok === "--shot") {
+      out.shot = args.shift() || null;
+      continue;
+    }
+    if (!out.command) {
+      out.command = tok;
+      continue;
+    }
+    out.rest.push(tok);
+  }
+  return out;
+}
+
+const parsed = parseArgs(process.argv.slice(2));
+const command = parsed.command;
+const rest = parsed.rest;
+const shotName = parsed.shot;
 
 function usage() {
   return [
-    "Usage: drive.mjs <command> [args]",
+    "Usage: drive.mjs [--shot <name>] <command> [args]",
+    "  --shot <name>      PNG in the same CDP session (needed to catch a 280ms hit grade)",
     "  ready              wait for the home screen",
     "  state              dump screen, HUD, choices, localStorage",
     "  shot <name>        PNG under $SAT_VOCAB_EVIDENCE/shots or .verify-run/shots",
@@ -68,6 +88,14 @@ function fail(message, extra) {
   const payload = { ok: false, error: message, ...(extra || {}) };
   console.error(JSON.stringify(payload, null, 2));
   process.exit(1);
+}
+
+async function saveShot(page, name) {
+  const dir = path.join(EVIDENCE, "shots");
+  fs.mkdirSync(dir, { recursive: true });
+  const file = path.join(dir, name.endsWith(".png") ? name : `${name}.png`);
+  await page.screenshot({ path: file, type: "png" });
+  return file;
 }
 
 async function connect() {
@@ -270,10 +298,7 @@ async function run(page) {
     case "shot": {
       const name = rest[0];
       if (!name) fail("shot requires a name");
-      const dir = path.join(EVIDENCE, "shots");
-      fs.mkdirSync(dir, { recursive: true });
-      const file = path.join(dir, name.endsWith(".png") ? name : `${name}.png`);
-      await page.screenshot({ path: file, type: "png" });
+      const file = await saveShot(page, name);
       return { ok: true, command, file };
     }
     case "html":
@@ -379,6 +404,9 @@ async function main() {
   try {
     const page = await getPage(browser);
     const result = await run(page);
+    if (shotName && result && command !== "shot") {
+      result.file = await saveShot(page, shotName);
+    }
     if (result && result.html) {
       console.log(result.html);
     } else {
