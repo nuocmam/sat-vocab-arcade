@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "command": "state",
+  "command": "wait-playing",
   "state": {
     "url": "http://127.0.0.1:8000/",
     "screen": "play",
@@ -10,40 +10,40 @@
     "countdownHidden": true,
     "questionHidden": false,
     "countdown": "BLITZ",
-    "word": "perfidious",
-    "playStatus": "Define perfidious",
+    "word": "tenacious",
+    "playStatus": "Define tenacious",
     "feedback": "",
     "feedbackClass": "feedback",
-    "score": "173",
-    "time": "59",
-    "combo": "x1",
+    "score": "0",
+    "time": "60",
+    "combo": "x0",
     "comboClass": "hud-num mag",
     "choices": [
       {
         "idx": 0,
         "key": "1",
-        "text": "deceitful and untrustworthy",
+        "text": "holding firmly; persistent",
         "className": "choice enter",
         "disabled": false
       },
       {
         "idx": 1,
         "key": "2",
-        "text": "trying to impress by affecting greater importance",
+        "text": "wanting to avoid activity or effort; lazy",
         "className": "choice enter",
         "disabled": false
       },
       {
         "idx": 2,
         "key": "3",
-        "text": "showing sound, careful judgment",
+        "text": "easily shaped, bent, or influenced",
         "className": "choice enter",
         "disabled": false
       },
       {
         "idx": 3,
         "key": "4",
-        "text": "a perfect example of a quality",
+        "text": "to wander away from the main subject",
         "className": "choice enter",
         "disabled": false
       }

@@ -1,6 +1,10 @@
 {
   "ok": true,
-  "command": "wait-playing",
+  "command": "key-correct",
+  "word": "tenacious",
+  "idx": 0,
+  "def": "holding firmly; persistent",
+  "key": "1",
   "state": {
     "url": "http://127.0.0.1:8000/",
     "screen": "play",
@@ -10,42 +14,42 @@
     "countdownHidden": true,
     "questionHidden": false,
     "countdown": "BLITZ",
-    "word": "meticulous",
-    "playStatus": "Define meticulous",
+    "word": "tenacious",
+    "playStatus": "Define tenacious",
     "feedback": "",
     "feedbackClass": "feedback",
-    "score": "0",
+    "score": "126",
     "time": "60",
-    "combo": "x0",
-    "comboClass": "hud-num mag",
+    "combo": "x1",
+    "comboClass": "hud-num mag tick",
     "choices": [
       {
         "idx": 0,
         "key": "1",
-        "text": "understood by only a small, specialized group",
-        "className": "choice enter",
-        "disabled": false
+        "text": "holding firmly; persistent",
+        "className": "choice enter correct land",
+        "disabled": true
       },
       {
         "idx": 1,
         "key": "2",
-        "text": "showing extreme care about small details",
-        "className": "choice enter",
-        "disabled": false
+        "text": "wanting to avoid activity or effort; lazy",
+        "className": "choice enter dim",
+        "disabled": true
       },
       {
         "idx": 2,
         "key": "3",
-        "text": "without fault or error",
-        "className": "choice enter",
-        "disabled": false
+        "text": "easily shaped, bent, or influenced",
+        "className": "choice enter dim",
+        "disabled": true
       },
       {
         "idx": 3,
         "key": "4",
-        "text": "feeling sincere remorse for a wrong",
-        "className": "choice enter",
-        "disabled": false
+        "text": "to wander away from the main subject",
+        "className": "choice enter dim",
+        "disabled": true
       }
     ],
     "finalScore": "0",
@@ -68,5 +72,6 @@
     },
     "playDisabled": false,
     "storage": null
-  }
+  },
+  "file": "/workspace/.cursor/skills/verify-sat-vocab-arcade/evidence/2026-08-21T1144Z-answer-via-keyboard/shots/04-after-key.png"
 }

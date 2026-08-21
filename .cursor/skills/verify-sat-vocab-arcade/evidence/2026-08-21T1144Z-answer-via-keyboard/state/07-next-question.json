@@ -1,10 +1,6 @@
 {
   "ok": true,
-  "command": "key-correct",
-  "word": "meticulous",
-  "idx": 1,
-  "def": "showing extreme care about small details",
-  "key": "2",
+  "command": "state",
   "state": {
     "url": "http://127.0.0.1:8000/",
     "screen": "play",
@@ -14,42 +10,42 @@
     "countdownHidden": true,
     "questionHidden": false,
     "countdown": "BLITZ",
-    "word": "meticulous",
-    "playStatus": "Define meticulous",
+    "word": "respite",
+    "playStatus": "Define respite",
     "feedback": "",
     "feedbackClass": "feedback",
-    "score": "122",
-    "time": "60",
+    "score": "173",
+    "time": "59",
     "combo": "x1",
-    "comboClass": "hud-num mag tick",
+    "comboClass": "hud-num mag",
     "choices": [
       {
         "idx": 0,
         "key": "1",
-        "text": "understood by only a small, specialized group",
-        "className": "choice enter dim",
-        "disabled": true
+        "text": "to waste away from lack of use",
+        "className": "choice enter",
+        "disabled": false
       },
       {
         "idx": 1,
         "key": "2",
-        "text": "showing extreme care about small details",
-        "className": "choice enter correct land",
-        "disabled": true
+        "text": "a short period of rest or relief",
+        "className": "choice enter",
+        "disabled": false
       },
       {
         "idx": 2,
         "key": "3",
-        "text": "without fault or error",
-        "className": "choice enter dim",
-        "disabled": true
+        "text": "possible and practical to carry out",
+        "className": "choice enter",
+        "disabled": false
       },
       {
         "idx": 3,
         "key": "4",
-        "text": "feeling sincere remorse for a wrong",
-        "className": "choice enter dim",
-        "disabled": true
+        "text": "a person fanatical in pursuit of an ideal or cause",
+        "className": "choice enter",
+        "disabled": false
       }
     ],
     "finalScore": "0",

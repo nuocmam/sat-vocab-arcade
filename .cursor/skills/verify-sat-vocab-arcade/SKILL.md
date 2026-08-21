@@ -170,6 +170,7 @@ npm install                          # once per machine (puppeteer-core)
 ./scripts/drive.mjs ready            # wait for home
 ./scripts/drive.mjs state            # JSON snapshot
 ./scripts/drive.mjs shot 01-home     # PNG
+./scripts/drive.mjs --shot 04-after-key key-correct   # key + PNG before the 280ms swap
 ./scripts/cleanup.sh                 # kill only what launch.sh started
 ./scripts/prove.sh                   # launch → doctor → keyboard hit → evidence → cleanup
 ```

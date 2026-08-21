@@ -1,6 +1,6 @@
 READY http://127.0.0.1:8000/
 CDP http://127.0.0.1:9222
-HTTP_PID 3959
-CHROME_PID 3971
+HTTP_PID 4490
+CHROME_PID 4502
 ENV /workspace/.cursor/skills/verify-sat-vocab-arcade/.verify-run/env
 Ready signal: HTTP 200 from http://127.0.0.1:8000/ whose HTML contains <title>SAT Word Blitz
