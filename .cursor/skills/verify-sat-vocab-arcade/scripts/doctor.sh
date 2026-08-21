@@ -104,17 +104,15 @@ if [[ -f "$ENV_FILE" ]]; then
   fi
 else
   echo "IDLE (no launch env). Ports default to HTTP $PORT and CDP $CDP."
-  if command -v ss >/dev/null 2>&1; then
-    if ss -ltn | grep -qE ":${PORT}\\s"; then
-      warn "port $PORT is in use by something else"
-    else
-      pass "port $PORT is free"
-    fi
-    if ss -ltn | grep -qE ":${CDP}\\s"; then
-      warn "port $CDP is in use by something else"
-    else
-      pass "port $CDP is free"
-    fi
+  if port_in_use "$BIND" "$PORT"; then
+    warn "port $PORT is in use by something else"
+  else
+    pass "port $PORT is free"
+  fi
+  if port_in_use 127.0.0.1 "$CDP"; then
+    warn "port $CDP is in use by something else"
+  else
+    pass "port $CDP is free"
   fi
 fi
 

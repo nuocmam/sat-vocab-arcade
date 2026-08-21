@@ -20,36 +20,36 @@ if pid_alive "${SAT_VOCAB_HTTP_PID:-}" && pid_alive "${SAT_VOCAB_CHROME_PID:-}";
   exit 0
 fi
 
-if command -v ss >/dev/null 2>&1; then
-  if ss -ltn | grep -qE ":${PORT}\\s"; then
-    echo "FAIL: port $PORT is already in use. Pick SAT_VOCAB_PORT or run cleanup.sh" >&2
-    exit 1
-  fi
-  if ss -ltn | grep -qE ":${CDP}\\s"; then
-    echo "FAIL: CDP port $CDP is already in use. Pick SAT_VOCAB_CDP or run cleanup.sh" >&2
-    exit 1
-  fi
+if port_in_use "$BIND" "$PORT"; then
+  echo "FAIL: $BIND:$PORT is already in use. Pick SAT_VOCAB_PORT or stop the other http.server" >&2
+  exit 1
+fi
+if port_in_use 127.0.0.1 "$CDP"; then
+  echo "FAIL: 127.0.0.1:$CDP is already in use. Pick SAT_VOCAB_CDP or run cleanup.sh" >&2
+  exit 1
 fi
 
 mkdir -p "$RUN_DIR"
 : > "$RUN_DIR/http.log"
 : > "$RUN_DIR/chrome.log"
 
-python3 -m http.server "$PORT" --bind "$BIND" \
+# Redirect in the command so nohup does not swallow the log path.
+nohup python3 -m http.server "$PORT" --bind "$BIND" \
   >"$RUN_DIR/http.log" 2>&1 &
 SAT_VOCAB_HTTP_PID=$!
+disown "$SAT_VOCAB_HTTP_PID" 2>/dev/null || true
 write_run_env
 
 ready=0
 for _ in $(seq 1 50); do
+  if ! pid_alive "$SAT_VOCAB_HTTP_PID"; then
+    echo "FAIL: http.server pid $SAT_VOCAB_HTTP_PID exited. See $RUN_DIR/http.log" >&2
+    cat "$RUN_DIR/http.log" >&2 || true
+    exit 1
+  fi
   if curl -sf "$URL" | grep -q "SAT Word Blitz"; then
     ready=1
     break
-  fi
-  if ! pid_alive "$SAT_VOCAB_HTTP_PID"; then
-    echo "FAIL: http.server exited. See $RUN_DIR/http.log" >&2
-    cat "$RUN_DIR/http.log" >&2 || true
-    exit 1
   fi
   sleep 0.1
 done
@@ -81,9 +81,10 @@ else
   chrome_args+=(--no-sandbox)
 fi
 
-"$CHROME_BIN" "${chrome_args[@]}" "$URL" \
+nohup "$CHROME_BIN" "${chrome_args[@]}" "$URL" \
   >"$RUN_DIR/chrome.log" 2>&1 &
 SAT_VOCAB_CHROME_PID=$!
+disown "$SAT_VOCAB_CHROME_PID" 2>/dev/null || true
 write_run_env
 
 cdp_ready=0

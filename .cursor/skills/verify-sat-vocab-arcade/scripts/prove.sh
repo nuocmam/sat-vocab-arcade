@@ -123,7 +123,7 @@ if [[ -d "$SKILL_DIR/.verify-run" ]]; then
 else
   echo "PASS run dir removed"
 fi
-if ss -ltn 2>/dev/null | grep -qE ":${PORT}\\s"; then
+if port_in_use "$BIND" "$PORT"; then
   echo "WARN port $PORT still listening"
 else
   echo "PASS port $PORT is free"

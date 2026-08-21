@@ -36,7 +36,7 @@ python3 -m http.server 8000 --bind 127.0.0.1
 # other terminal: open http://127.0.0.1:8000/
 ```
 
-**Two instances:** HTTP binds one port per process. A second `http.server` on 8000 fails. Side-by-side works on different ports and CDP ports:
+**Two instances:** HTTP binds one port per process. A second `http.server` on 8000 fails (`launch.sh` checks the bind with Python; `ss` is not required). Side-by-side works on different ports and CDP ports:
 
 ```bash
 SAT_VOCAB_PORT=8001 SAT_VOCAB_CDP=9223 SAT_VOCAB_RUN_DIR=.cursor/skills/verify-sat-vocab-arcade/.verify-run-b \

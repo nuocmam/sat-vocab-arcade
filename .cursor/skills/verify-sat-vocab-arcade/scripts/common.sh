@@ -93,3 +93,28 @@ SAT_VOCAB_CHROME=$CHROME_BIN
 SAT_VOCAB_PROFILE=$RUN_DIR/chrome-profile
 EOF
 }
+
+# True when a process is LISTENING on host:port.
+# Bind() is the wrong test here: TIME_WAIT leftovers from curl make bind
+# fail even when nothing is accepting (ss is also missing on this image).
+port_in_use() {
+  local host="$1"
+  local port="$2"
+  python3 - "$host" "$port" <<'PY'
+import socket, sys
+host, port = sys.argv[1], int(sys.argv[2])
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.settimeout(0.4)
+try:
+    s.connect((host, port))
+except ConnectionRefusedError:
+    sys.exit(1)
+except OSError:
+    sys.exit(1)
+else:
+    sys.exit(0)
+finally:
+    s.close()
+PY
+}
+
