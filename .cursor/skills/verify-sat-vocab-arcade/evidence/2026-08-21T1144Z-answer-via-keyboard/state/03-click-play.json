@@ -1,0 +1,5 @@
+{
+  "ok": true,
+  "command": "click-play",
+  "clicked": "#playBtn"
+}

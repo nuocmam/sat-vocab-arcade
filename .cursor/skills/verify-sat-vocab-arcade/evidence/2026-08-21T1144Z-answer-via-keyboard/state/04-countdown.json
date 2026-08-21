@@ -1,0 +1,43 @@
+{
+  "ok": true,
+  "command": "wait-countdown",
+  "state": {
+    "url": "http://127.0.0.1:8000/",
+    "screen": "play",
+    "homeHidden": true,
+    "playHidden": false,
+    "resultsHidden": true,
+    "countdownHidden": false,
+    "questionHidden": true,
+    "countdown": "3",
+    "word": "—",
+    "playStatus": "Round in progress",
+    "feedback": "",
+    "feedbackClass": "feedback",
+    "score": "0",
+    "time": "60",
+    "combo": "x0",
+    "comboClass": "hud-num mag",
+    "choices": [],
+    "finalScore": "0",
+    "highNote": "NEW HIGH SCORE",
+    "highNoteHidden": true,
+    "comboNote": "NEW MAX COMBO",
+    "comboNoteHidden": true,
+    "hitCount": "0",
+    "missCount": "0",
+    "runCombo": "0",
+    "missedHidden": true,
+    "missed": [],
+    "homeBest": "0",
+    "homeCombo": "0",
+    "homeGames": "0",
+    "mute": {
+      "pressed": "false",
+      "label": "Mute sound",
+      "text": "SND"
+    },
+    "playDisabled": false,
+    "storage": null
+  }
+}

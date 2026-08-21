@@ -1,0 +1,72 @@
+{
+  "ok": true,
+  "command": "state",
+  "state": {
+    "url": "http://127.0.0.1:8000/",
+    "screen": "play",
+    "homeHidden": true,
+    "playHidden": false,
+    "resultsHidden": true,
+    "countdownHidden": true,
+    "questionHidden": false,
+    "countdown": "BLITZ",
+    "word": "respite",
+    "playStatus": "Define respite",
+    "feedback": "",
+    "feedbackClass": "feedback",
+    "score": "173",
+    "time": "59",
+    "combo": "x1",
+    "comboClass": "hud-num mag",
+    "choices": [
+      {
+        "idx": 0,
+        "key": "1",
+        "text": "to waste away from lack of use",
+        "className": "choice enter",
+        "disabled": false
+      },
+      {
+        "idx": 1,
+        "key": "2",
+        "text": "a short period of rest or relief",
+        "className": "choice enter",
+        "disabled": false
+      },
+      {
+        "idx": 2,
+        "key": "3",
+        "text": "possible and practical to carry out",
+        "className": "choice enter",
+        "disabled": false
+      },
+      {
+        "idx": 3,
+        "key": "4",
+        "text": "a person fanatical in pursuit of an ideal or cause",
+        "className": "choice enter",
+        "disabled": false
+      }
+    ],
+    "finalScore": "0",
+    "highNote": "NEW HIGH SCORE",
+    "highNoteHidden": true,
+    "comboNote": "NEW MAX COMBO",
+    "comboNoteHidden": true,
+    "hitCount": "0",
+    "missCount": "0",
+    "runCombo": "0",
+    "missedHidden": true,
+    "missed": [],
+    "homeBest": "0",
+    "homeCombo": "0",
+    "homeGames": "0",
+    "mute": {
+      "pressed": "false",
+      "label": "Mute sound",
+      "text": "SND"
+    },
+    "playDisabled": false,
+    "storage": null
+  }
+}

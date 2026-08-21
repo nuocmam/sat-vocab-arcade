@@ -1,0 +1,9 @@
+{
+  "name": "verify-sat-vocab-arcade",
+  "private": true,
+  "type": "module",
+  "description": "Local verification helpers for SAT Word Blitz (Chrome CDP)",
+  "dependencies": {
+    "puppeteer-core": "^24.17.0"
+  }
+}

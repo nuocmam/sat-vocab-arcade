@@ -1,0 +1,77 @@
+{
+  "ok": true,
+  "command": "key-correct",
+  "word": "tenacious",
+  "idx": 0,
+  "def": "holding firmly; persistent",
+  "key": "1",
+  "state": {
+    "url": "http://127.0.0.1:8000/",
+    "screen": "play",
+    "homeHidden": true,
+    "playHidden": false,
+    "resultsHidden": true,
+    "countdownHidden": true,
+    "questionHidden": false,
+    "countdown": "BLITZ",
+    "word": "tenacious",
+    "playStatus": "Define tenacious",
+    "feedback": "",
+    "feedbackClass": "feedback",
+    "score": "126",
+    "time": "60",
+    "combo": "x1",
+    "comboClass": "hud-num mag tick",
+    "choices": [
+      {
+        "idx": 0,
+        "key": "1",
+        "text": "holding firmly; persistent",
+        "className": "choice enter correct land",
+        "disabled": true
+      },
+      {
+        "idx": 1,
+        "key": "2",
+        "text": "wanting to avoid activity or effort; lazy",
+        "className": "choice enter dim",
+        "disabled": true
+      },
+      {
+        "idx": 2,
+        "key": "3",
+        "text": "easily shaped, bent, or influenced",
+        "className": "choice enter dim",
+        "disabled": true
+      },
+      {
+        "idx": 3,
+        "key": "4",
+        "text": "to wander away from the main subject",
+        "className": "choice enter dim",
+        "disabled": true
+      }
+    ],
+    "finalScore": "0",
+    "highNote": "NEW HIGH SCORE",
+    "highNoteHidden": true,
+    "comboNote": "NEW MAX COMBO",
+    "comboNoteHidden": true,
+    "hitCount": "0",
+    "missCount": "0",
+    "runCombo": "0",
+    "missedHidden": true,
+    "missed": [],
+    "homeBest": "0",
+    "homeCombo": "0",
+    "homeGames": "0",
+    "mute": {
+      "pressed": "false",
+      "label": "Mute sound",
+      "text": "SND"
+    },
+    "playDisabled": false,
+    "storage": null
+  },
+  "file": "/workspace/.cursor/skills/verify-sat-vocab-arcade/evidence/2026-08-21T1144Z-answer-via-keyboard/shots/04-after-key.png"
+}
